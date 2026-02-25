@@ -1,22 +1,90 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-  <meta charset="UTF-8">
-  <title>Контакти</title>
-</head>
-<body>
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Калькулятор сопровода</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<h2>Контакти</h2>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #1e1e2f, #2b2b45);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+      }
 
-<input class="name" placeholder="Ім'я">
-<input class="surname" placeholder="Прізвище">
-<input class="phone" placeholder="Телефон">
-<input class="email" placeholder="Email">
+      .box {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        border-radius: 15px;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+      }
 
-<button onclick="addContact()">Додати</button>
+      input,
+      textarea,
+      button {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        border: none;
+        font-size: 15px;
+      }
 
-<ul class="list"></ul>
+      input,
+      textarea {
+        background: rgba(255, 255, 255, 0.9);
+      }
 
-<script src="./index.js"></script>
-</body>
+      button {
+        background: #4cafef;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .result {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 10px;
+        border-radius: 10px;
+        margin-top: 10px;
+        font-size: 14px;
+      }
+
+      textarea {
+        resize: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h2>Калькулятор сопровода</h2>
+
+      <!-- ВОТ ТУТ ПРИМЕР -->
+      <input
+        class="orderText"
+        placeholder="Что входит в заказ? Например: 8кк 3/4 билета + ф6"
+      />
+
+      <input class="platform" placeholder="Платформа (FunPay и т.п.)" />
+      <input class="orderNum" placeholder="Номер заказа" />
+      <input class="price" placeholder="Стоимость сопровода (руб)" />
+      <input class="tg" placeholder="TG юз того, кто нашел" />
+
+      <button onclick="calculate()">Посчитать</button>
+
+      <div class="result"></div>
+
+      <h3>Текст для копирования</h3>
+      <textarea class="copyBox" rows="12"></textarea>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
 </html>
