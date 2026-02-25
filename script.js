@@ -38,7 +38,6 @@ function calculate() {
     <p>2 ранг: ${r2} руб</p>
     <p>3 ранг: ${r3} руб</p>
     <p>Зам: ${zam} руб</p>
-    <p>Запасной зам: ${zamZapas} руб</p>
     <hr>
     <p>Метрошоп: ${metro} руб</p>
     <p>${tgUser}: ${finder} руб</p>
@@ -53,7 +52,6 @@ ${orderText}
 2 ранг - ${r2}р
 3 ранг - ${r3}р
 Зам - ${zam}р
-Запасной зам - ${zamZapas}р
 
 Метрошоп - ${metro}р
 ${tgUser} - ${finder}р
