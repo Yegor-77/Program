@@ -66,12 +66,7 @@
     <div class="box">
       <h2>Калькулятор сопровода</h2>
 
-      <!-- ВОТ ТУТ ПРИМЕР -->
-      <input
-        class="orderText"
-        placeholder="Что входит в заказ? Например: 8кк 3/4 билета + ф6"
-      />
-
+      <input class="orderText" placeholder="Что входит в заказ? Например: 8кк 3/4 билета + ф6" />
       <input class="platform" placeholder="Платформа (FunPay и т.п.)" />
       <input class="orderNum" placeholder="Номер заказа" />
       <input class="price" placeholder="Стоимость сопровода (руб)" />
@@ -83,6 +78,33 @@
 
       <h3>Текст для копирования</h3>
       <textarea class="copyBox" rows="12"></textarea>
+
+      <hr />
+
+      <button onclick="showSuccess()" id="successBtn" style="display:none;background:#4caf50;">
+        🟢 Удачное выполнение
+      </button>
+      <button onclick="showFail()" id="failBtn" style="display:none;background:#e53935;">
+        🔴 Неудачное выполнение
+      </button>
+
+      <!-- ❌ Неудачное -->
+      <div id="failBlock" style="display:none;margin-top:10px;">
+        <input id="failUsers" placeholder="Юзы участников через пробел" />
+        <button onclick="makeFail()">Сформировать</button>
+        <textarea id="failCopy" rows="6"></textarea>
+      </div>
+
+      <!-- ✅ Удачное -->
+      <div id="successBlock" style="display:none; margin-top:15px;">
+        <input id="winGames" type="number" placeholder="Количество удачных каток" />
+
+        <div id="players"></div>
+        <button onclick="addPlayer()">Еще игрок</button>
+        <button onclick="makeSuccess()">Сформировать</button>
+
+        <textarea id="successCopy" rows="10"></textarea>
+      </div>
     </div>
 
     <script src="script.js"></script>
