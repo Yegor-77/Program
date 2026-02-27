@@ -2,9 +2,8 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <title>Калькулятор сопровода</title>
+    <title>Калькулятор сопровода с регистрацией</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <style>
       body {
         margin: 0;
@@ -16,7 +15,6 @@
         justify-content: center;
         color: #fff;
       }
-
       .box {
         background: rgba(255, 255, 255, 0.12);
         backdrop-filter: blur(10px);
@@ -26,7 +24,6 @@
         max-width: 500px;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
       }
-
       input,
       textarea,
       button {
@@ -37,18 +34,15 @@
         border: none;
         font-size: 15px;
       }
-
       input,
       textarea {
         background: rgba(255, 255, 255, 0.9);
       }
-
       button {
         background: #4cafef;
         font-weight: bold;
         cursor: pointer;
       }
-
       .result {
         background: rgba(0, 0, 0, 0.3);
         padding: 10px;
@@ -56,72 +50,559 @@
         margin-top: 10px;
         font-size: 14px;
       }
-
       textarea {
         resize: none;
+      }
+      #backBtn {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: 20px;
+        cursor: pointer;
+      }
+      #profileSettings {
+        display: none;
+      }
+      #adminPanel {
+        display: none;
+        margin-top: 20px;
       }
     </style>
   </head>
   <body>
-    <div class="box">
-      <h2>Калькулятор сопровода</h2>
+   
 
-      <input
-        class="orderText"
-        placeholder="Что входит в заказ? Например: 8кк 3/4 билета + ф6"
-      />
-      <input class="platform" placeholder="Платформа (FunPay и т.п.)" />
-      <input class="orderNum" placeholder="Номер заказа" />
-      <input class="price" placeholder="Стоимость сопровода (руб)" />
-      <input class="tg" placeholder="TG юз того, кто нашел" />
-
-      <button onclick="calculate()">Посчитать</button>
-
-      <div class="result"></div>
-
-      <h3>Текст для копирования</h3>
-      <textarea class="copyBox" rows="12"></textarea>
-
-      <hr />
-
-      <button
-        onclick="showSuccess()"
-        id="successBtn"
-        style="display: none; background: #4caf50"
-      >
-        🟢 Удачное выполнение
-      </button>
-      <button
-        onclick="showFail()"
-        id="failBtn"
-        style="display: none; background: #e53935"
-      >
-        🔴 Неудачное выполнение
-      </button>
-
-      <!-- ❌ Неудачное -->
-      <div id="failBlock" style="display: none; margin-top: 10px">
-        <input id="failUsers" placeholder="Юзы участников через пробел" />
-        <button onclick="makeFail()">Сформировать</button>
-        <textarea id="failCopy" rows="6"></textarea>
+      <!-- Экран выбора роли -->
+      <div id="welcomeScreen">
+        <h2>Здравствуйте! Выберите способ регистрации:</h2>
+        <button onclick="chooseRole('admin')">Админ</button>
+        <button onclick="chooseRole('user')">Пользователь</button>
+        <button onclick="showLogin()">Войти</button>
       </div>
 
-      <!-- ✅ Удачное -->
-      <div id="successBlock" style="display: none; margin-top: 15px">
-        <input
-          id="winGames"
-          type="number"
-          placeholder="Количество удачных каток"
-        />
+      <!-- Форма регистрации -->
+      <div id="registerForm" style="display: none">
+        <h2>Регистрация <span id="roleTitle"></span></h2>
+        <input id="regUsername" placeholder="Ник" />
+        <input id="regEmail" placeholder="Email" />
+        <input id="regPhone" placeholder="Телефон (≥9 цифр)" />
+        <input id="regPassword" type="password" placeholder="Пароль" />
+        <input id="regTG" placeholder="Ваш TG юзер" />
+        <button onclick="register()">Зарегистрироваться</button>
+        <p>
+          Уже есть аккаунт?
+          <span
+            style="cursor: pointer; text-decoration: underline"
+            onclick="showLogin()"
+            >Войти</span
+          >
+        </p>
+      </div>
 
-        <div id="players"></div>
-        <button onclick="addPlayer()">Еще игрок</button>
-        <button onclick="makeSuccess()">Сформировать</button>
+      <!-- Форма входа -->
+      <div id="loginForm" style="display: none">
+        <h2>Вход</h2>
+        <input id="loginUsername" placeholder="Ник" />
+        <input id="loginPassword" type="password" placeholder="Пароль" />
+        <button onclick="login()">Войти</button>
+        <p>
+          Нет аккаунта?
+          <span
+            style="cursor: pointer; text-decoration: underline"
+            onclick="showRegister()"
+            >Зарегистрироваться</span
+          >
+        </p>
+      </div>
 
-        <textarea id="successCopy" rows="10"></textarea>
+      <!-- Дашборд -->
+      <div id="dashboard" style="display: none">
+        <div id="profileIcon">⚙️</div>
+        <div id="profileSettings">
+          <h3>Настройки профиля</h3>
+          <input id="setUsername" placeholder="Ник" />
+          <input id="setEmail" placeholder="Email" />
+          <input id="setPhone" placeholder="Телефон" />
+          <input id="setTG" placeholder="TG юзер" />
+          <input id="setPassword" type="password" placeholder="Новый пароль" />
+          <button onclick="saveProfile()">Сохранить</button>
+          <button onclick="logoutUser()">Выйти</button>
+        </div>
+
+        <div id="adminPanel">
+          <h3>Админ панель</h3>
+          <button onclick="viewUsers()">Пользователи</button>
+          <button onclick="viewHistory()">История калькулятора</button>
+        </div>
+
+        <h2>Калькулятор сопровода</h2>
+        <button id="showCalculatorBtn" onclick="showCalculator()">
+          Открыть калькулятор
+        </button>
+        <div id="calculator" style="display: none; margin-top: 10px">
+          <input class="orderText" placeholder="Что входит в заказ?" />
+          <input class="platform" placeholder="Платформа" />
+          <input class="orderNum" placeholder="Номер заказа" />
+          <input class="price" placeholder="Стоимость сопровода (руб)" />
+          <input class="tg" placeholder="TG юз того, кто нашел" />
+          <button onclick="calculate()">Посчитать</button>
+          <div class="result"></div>
+          <h3>Текст для копирования</h3>
+          <textarea class="copyBox" rows="12"></textarea>
+
+          <button
+            id="successBtn"
+            style="display: none; background: #4caf50"
+            onclick="showSuccess()"
+          >
+            🟢 Удачное выполнение
+          </button>
+          <button
+            id="failBtn"
+            style="display: none; background: #e53935"
+            onclick="showFail()"
+          >
+            🔴 Неудачное выполнение
+          </button>
+
+          <div id="failBlock" style="display: none; margin-top: 10px">
+            <input id="failUsers" placeholder="Юзы участников через пробел" />
+            <button onclick="makeFail()">Сформировать</button>
+            <textarea id="failCopy" rows="6"></textarea>
+          </div>
+
+          <div id="successBlock" style="display: none; margin-top: 10px">
+            <input
+              id="winGames"
+              type="number"
+              placeholder="Количество удачных каток"
+            />
+            <div id="players"></div>
+            <button onclick="addPlayer()">Еще игрок</button>
+            <button onclick="makeSuccess()">Сформировать</button>
+            <textarea id="successCopy" rows="10"></textarea>
+          </div>
+        </div>
       </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+      // ===== Работа с пользователями =====
+      function getUsers() {
+        return JSON.parse(localStorage.getItem("users") || "[]");
+      }
+      function saveUsers(users) {
+        localStorage.setItem("users", JSON.stringify(users));
+      }
+      function getCurrentUser() {
+        const id = localStorage.getItem("currentUserId");
+        if (!id) return null;
+        return getUsers().find((u) => u.id === id);
+      }
+      function saveCurrentUser(user) {
+        localStorage.setItem("currentUserId", user.id);
+      }
+      function logoutUser() {
+        localStorage.removeItem("currentUserId");
+        showWelcome();
+      }
+
+      // ===== Проверка профиля =====
+      function hasProfileErrors(user) {
+        if (!user) return true;
+        if (
+          !user.username ||
+          !user.email ||
+          !user.phone ||
+          !user.password ||
+          !user.tg
+        )
+          return true;
+        if (user.phone && !/^\d{9,}$/.test(user.phone)) return true;
+        return false;
+      }
+
+      // ===== Показ форм =====
+      let chosenRole = null;
+      function chooseRole(role) {
+        chosenRole = role;
+        document.getElementById("welcomeScreen").style.display = "none";
+        document.getElementById("roleTitle").innerText =
+          role === "admin" ? "Админ" : "Пользователь";
+        showRegister();
+      }
+      function showRegister() {
+        document.getElementById("registerForm").style.display = "block";
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("dashboard").style.display = "none";
+        document.getElementById("welcomeScreen").style.display = "none";
+      }
+      function showLogin() {
+        document.getElementById("loginForm").style.display = "block";
+        document.getElementById("registerForm").style.display = "none";
+        document.getElementById("dashboard").style.display = "none";
+        document.getElementById("welcomeScreen").style.display = "none";
+      }
+      function showWelcome() {
+        document.getElementById("welcomeScreen").style.display = "block";
+        document.getElementById("registerForm").style.display = "none";
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("dashboard").style.display = "none";
+      }
+
+      // ===== Регистрация =====
+      function register() {
+        const username = document.getElementById("regUsername").value.trim();
+        const email = document.getElementById("regEmail").value.trim();
+        const phone = document.getElementById("regPhone").value.trim();
+        const password = document.getElementById("regPassword").value.trim();
+        const tg = document.getElementById("regTG").value.trim();
+        if (!username || !email || !phone || !password || !tg) {
+          alert("❌ Заполните все поля");
+          return;
+        }
+        if (!/^\d{9,}$/.test(phone)) {
+          alert("❌ Телефон должен быть ≥9 цифр");
+          return;
+        }
+        const users = getUsers();
+        if (chosenRole === "admin") {
+          if (!/^admin([1-9]|1[0-9]|20)$/.test(username)) {
+            alert("❌ Неверный ник для админа");
+            return;
+          }
+          if (
+            users.some((u) => u.username === username && u.role === "admin")
+          ) {
+            alert("❌ Такой админ уже есть");
+            return;
+          }
+        } else {
+          if (users.some((u) => u.username === username)) {
+            alert("❌ Такой пользователь уже есть");
+            return;
+          }
+        }
+        const newUser = {
+          id: "user_" + (users.length + 1),
+          role: chosenRole || "user",
+          username,
+          email,
+          phone,
+          password,
+          tg,
+          history: [],
+        };
+        users.push(newUser);
+        saveUsers(users);
+        saveCurrentUser(newUser);
+        startDashboard();
+      }
+
+      // ===== Вход =====
+      function login() {
+        const username = document.getElementById("loginUsername").value.trim();
+        const password = document.getElementById("loginPassword").value.trim();
+        const user = getUsers().find(
+          (u) => u.username === username && u.password === password,
+        );
+        if (!user) {
+          alert("❌ Неверный ник или пароль");
+          return;
+        }
+        saveCurrentUser(user);
+        startDashboard();
+      }
+
+      // ===== Дашборд =====
+      const profileIcon = document.getElementById("profileIcon");
+      const profileSettings = document.getElementById("profileSettings");
+      profileIcon.addEventListener("click", () => {
+        profileSettings.style.display =
+          profileSettings.style.display === "none" ? "block" : "none";
+      });
+
+      function saveProfile() {
+        const user = getCurrentUser();
+        if (!user) return;
+        const setUsername = document.getElementById("setUsername").value.trim();
+        const setEmail = document.getElementById("setEmail").value.trim();
+        const setPhone = document.getElementById("setPhone").value.trim();
+        const setTG = document.getElementById("setTG").value.trim();
+        const setPassword = document.getElementById("setPassword").value.trim();
+        const tempUser = {
+          ...user,
+          username: setUsername || user.username,
+          email: setEmail || user.email,
+          phone: setPhone || user.phone,
+          tg: setTG || user.tg,
+          password: setPassword || user.password,
+        };
+        if (hasProfileErrors(tempUser)) {
+          alert("❌ Данные профиля некорректны");
+          return;
+        }
+        Object.assign(user, tempUser);
+        const users = getUsers();
+        users[users.findIndex((u) => u.id === user.id)] = user;
+        saveUsers(users);
+        alert("✅ Данные сохранены");
+        startDashboard();
+      }
+
+      function startDashboard() {
+        const user = getCurrentUser();
+        if (!user) {
+          showWelcome();
+          return;
+        }
+        document.getElementById("welcomeScreen").style.display = "none";
+        document.getElementById("registerForm").style.display = "none";
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+        document.getElementById("showCalculatorBtn").style.display =
+          "inline-block";
+        document.getElementById("adminPanel").style.display =
+          user.role === "admin" ? "block" : "none";
+
+        // подставляем данные профиля
+        document.getElementById("setUsername").value = user.username;
+        document.getElementById("setEmail").value = user.email;
+        document.getElementById("setPhone").value = user.phone;
+        document.getElementById("setTG").value = user.tg;
+      }
+
+      // ===== Кнопка назад =====
+      document.getElementById("backBtn").addEventListener("click", () => {
+        const user = getCurrentUser();
+        if (!user) showWelcome();
+        else startDashboard();
+      });
+
+      // ===== История калькулятора =====
+      function saveHistory(entry) {
+        let history = JSON.parse(localStorage.getItem("calcHistory") || "[]");
+        history.push(entry);
+        if (history.length > 100) history.shift();
+        localStorage.setItem("calcHistory", JSON.stringify(history));
+      }
+      function viewHistory() {
+        const user = getCurrentUser();
+        if (!user || user.role !== "admin") {
+          alert("❌ Нет доступа");
+          return;
+        }
+        const history = JSON.parse(localStorage.getItem("calcHistory") || "[]");
+        alert(
+          "История калькулятора:\n" +
+            history.map((h, i) => i + 1 + ". " + JSON.stringify(h)).join("\n"),
+        );
+      }
+
+      // ===== Калькулятор (старый функционал) =====
+      const orderTextInput = document.querySelector(".orderText");
+      const platformInput = document.querySelector(".platform");
+      const orderNumInput = document.querySelector(".orderNum");
+      const priceInput = document.querySelector(".price");
+      const tgInput = document.querySelector(".tg");
+      const result = document.querySelector(".result");
+      const copyBox = document.querySelector(".copyBox");
+      const playersDiv = document.getElementById("players");
+      const successBtn = document.getElementById("successBtn");
+      const failBtn = document.getElementById("failBtn");
+      const successBlock = document.getElementById("successBlock");
+      const failBlock = document.getElementById("failBlock");
+      let playerCount = 0;
+
+      function showCalculator() {
+        const user = getCurrentUser();
+        if (!user) {
+          alert("❌ Войдите в систему");
+          return;
+        }
+        if (hasProfileErrors(user)) {
+          alert("❌ Ваш профиль неполный!");
+          return;
+        }
+        document.getElementById("calculator").style.display = "block";
+      }
+
+      function calculate() {
+        const price = Number(priceInput.value);
+        if (!price) {
+          result.innerHTML = "Введите стоимость";
+          return;
+        }
+        const tgUser = tgInput.value.trim() || "Не указан";
+        const orderText = orderTextInput.value || "—";
+        const platform = platformInput.value || "—";
+        const orderNum = orderNumInput.value || "?";
+
+        const after15 = Math.floor(price * 0.85);
+        const zapas = Math.floor(after15 * 0.23);
+        const r1 = Math.floor(after15 * 0.25);
+        const r2 = Math.floor(after15 * 0.27);
+        const r3 = Math.floor(after15 * 0.31);
+        const zam = Math.floor(after15 * 0.33);
+        const metro = Math.floor(price * 0.05);
+        const finder = Math.floor(price * 0.1);
+
+        result.innerHTML = `
+          <p><u>Заказ №${orderNum}</u> | ${platform}</p>
+          <p>После -15%: ${after15} руб</p>
+          <p>Запасной: ${zapas} руб</p>
+          <p>1 ранг: ${r1} руб</p>
+          <p>2 ранг: ${r2} руб</p>
+          <p>3 ранг: ${r3} руб</p>
+          <p>Зам: ${zam} руб</p>
+          <hr>
+          <p>Метрошоп: ${metro} руб</p>
+          <p>${tgUser}: ${finder} руб</p>
+        `;
+
+        copyBox.value = `Заказ [№${orderNum} - ${platform}]
+${orderText}
+
+ЗП за помощь:
+Запасной - ${zapas}р
+1 ранг - ${r1}р
+2 ранг - ${r2}р
+3 ранг - ${r3}р
+Зам - ${zam}р
+
+Метрошоп - ${metro}р
+${tgUser} - ${finder}р
+
++ В чат кто идет`;
+
+        successBtn.style.display = "block";
+        failBtn.style.display = "block";
+
+        saveHistory({
+          orderNum,
+          platform,
+          orderText,
+          price,
+          tgUser,
+          after15,
+          zapas,
+          r1,
+          r2,
+          r3,
+          zam,
+          metro,
+          finder,
+        });
+      }
+
+      function showSuccess() {
+        successBlock.style.display = "block";
+        failBlock.style.display = "none";
+      }
+      function showFail() {
+        failBlock.style.display = "block";
+        successBlock.style.display = "none";
+      }
+
+      function addPlayer() {
+        playerCount++;
+        const div = document.createElement("div");
+        div.style.marginBottom = "15px";
+        div.style.paddingBottom = "15px";
+        div.style.borderBottom = "2px solid rgba(255,255,255,0.2)";
+        div.innerHTML = `
+          <div style="margin-bottom:10px;font-weight:bold;">Участник №${playerCount}</div>
+          <input class="user" placeholder="Юз (@user)" style="margin-bottom:10px;">
+          <select class="rank" style="margin-bottom:10px;padding:12px;font-size:16px;">
+            <option value="23">Запасной (23%)</option>
+            <option value="25">1 ранг (25%)</option>
+            <option value="27">2 ранг (27%)</option>
+            <option value="31">3 ранг (31%)</option>
+            <option value="33">Зам (33%)</option>
+          </select>
+          <input class="games" type="number" placeholder="Сыграно каток" style="margin-bottom:10px;">
+        `;
+        if (playerCount > 1) {
+          const removeBtn = document.createElement("button");
+          removeBtn.textContent = "Удалить";
+          removeBtn.style.background = "#e53935";
+          removeBtn.onclick = () => div.remove();
+          div.appendChild(removeBtn);
+        }
+        playersDiv.appendChild(div);
+        div.scrollIntoView({ behavior: "smooth", block: "end" });
+      }
+
+      function makeSuccess() {
+        const price = Number(priceInput.value);
+        const winGames = Number(document.getElementById("winGames").value);
+        const orderNum = orderNumInput.value || "?";
+        const platform = platformInput.value || "—";
+        const tgUser = tgInput.value.trim() || "Не указан";
+        if (!price || !winGames) {
+          alert("Заполни цену и общее количество удачных каток!");
+          return;
+        }
+        const rows = document.querySelectorAll("#players > div");
+        if (rows.length === 0) {
+          alert("Добавь хотя бы одного участника!");
+          return;
+        }
+        const after15 = Math.floor(price * 0.85);
+        let metro = Math.floor(price * 0.05);
+        const finder = Math.floor(price * 0.1);
+        let totalUsed = 0;
+        const playersMoney = {};
+        for (let row of rows) {
+          const user = row.querySelector(".user").value.trim();
+          const percent = Number(row.querySelector(".rank").value);
+          const games = Number(row.querySelector(".games").value);
+          if (!user || !games) {
+            alert("Заполни все поля участников!");
+            return;
+          }
+          if (games > winGames) {
+            alert("Количество каток больше общего числа!");
+            return;
+          }
+          const money = Math.floor(
+            after15 * (percent / 100) * (games / winGames),
+          );
+          totalUsed += money;
+          if (playersMoney[user]) {
+            playersMoney[user] += money;
+          } else {
+            playersMoney[user] = money;
+          }
+        }
+        metro += after15 - totalUsed;
+        if (playersMoney[tgUser]) {
+          playersMoney[tgUser] += finder;
+        } else {
+          playersMoney[tgUser] = finder;
+        }
+        let text = `📊Удачное выполнение заказа [№${orderNum} - ${platform}]📊\n😍Зп за помощь 😍\n`;
+        for (const user in playersMoney) {
+          text += `${user} + ${playersMoney[user]}р\n`;
+        }
+        text += `\nМетрошоп + ${metro}р`;
+        document.getElementById("successCopy").value = text;
+      }
+
+      function makeFail() {
+        const users = document
+          .getElementById("failUsers")
+          .value.split(" ")
+          .filter((u) => u);
+        if (users.length === 0) {
+          alert("Введи хотя бы одного участника!");
+          return;
+        }
+        const text = users.map((u) => `${u} - 0р`).join("\n");
+        document.getElementById("failCopy").value =
+          `❌ Неудачное выполнение\n${text}`;
+      }
+      
+    </script>
   </body>
 </html>
