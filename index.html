@@ -2,7 +2,7 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <title>Калькулятор сопровода с регистрацией</title>
+    <title>Калькулятор сопровода</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
       body {
@@ -70,118 +70,115 @@
     </style>
   </head>
   <body>
-   
+    <!-- Экран выбора роли -->
+    <div id="welcomeScreen">
+      <h2>Здравствуйте! Выберите способ регистрации:</h2>
+      <button onclick="chooseRole('admin')">Админ</button>
+      <button onclick="chooseRole('user')">Пользователь</button>
+      <button onclick="showLogin()">Войти</button>
+    </div>
 
-      <!-- Экран выбора роли -->
-      <div id="welcomeScreen">
-        <h2>Здравствуйте! Выберите способ регистрации:</h2>
-        <button onclick="chooseRole('admin')">Админ</button>
-        <button onclick="chooseRole('user')">Пользователь</button>
-        <button onclick="showLogin()">Войти</button>
+    <!-- Форма регистрации -->
+    <div id="registerForm" style="display: none">
+      <h2>Регистрация <span id="roleTitle"></span></h2>
+      <input id="regUsername" placeholder="Ник" />
+      <input id="regEmail" placeholder="Email" />
+      <input id="regPhone" placeholder="Телефон (≥9 цифр)" />
+      <input id="regPassword" type="password" placeholder="Пароль" />
+      <input id="regTG" placeholder="Ваш TG юзер" />
+      <button onclick="register()">Зарегистрироваться</button>
+      <p>
+        Уже есть аккаунт?
+        <span
+          style="cursor: pointer; text-decoration: underline"
+          onclick="showLogin()"
+          >Войти</span
+        >
+      </p>
+    </div>
+
+    <!-- Форма входа -->
+    <div id="loginForm" style="display: none">
+      <h2>Вход</h2>
+      <input id="loginUsername" placeholder="Ник" />
+      <input id="loginPassword" type="password" placeholder="Пароль" />
+      <button onclick="login()">Войти</button>
+      <p>
+        Нет аккаунта?
+        <span
+          style="cursor: pointer; text-decoration: underline"
+          onclick="showRegister()"
+          >Зарегистрироваться</span
+        >
+      </p>
+    </div>
+
+    <!-- Дашборд -->
+    <div id="dashboard" style="display: none">
+      <div id="profileIcon">⚙️</div>
+      <div id="profileSettings">
+        <h3>Настройки профиля</h3>
+        <input id="setUsername" placeholder="Ник" />
+        <input id="setEmail" placeholder="Email" />
+        <input id="setPhone" placeholder="Телефон" />
+        <input id="setTG" placeholder="TG юзер" />
+        <input id="setPassword" type="password" placeholder="Новый пароль" />
+        <button onclick="saveProfile()">Сохранить</button>
+        <button onclick="logoutUser()">Выйти</button>
       </div>
 
-      <!-- Форма регистрации -->
-      <div id="registerForm" style="display: none">
-        <h2>Регистрация <span id="roleTitle"></span></h2>
-        <input id="regUsername" placeholder="Ник" />
-        <input id="regEmail" placeholder="Email" />
-        <input id="regPhone" placeholder="Телефон (≥9 цифр)" />
-        <input id="regPassword" type="password" placeholder="Пароль" />
-        <input id="regTG" placeholder="Ваш TG юзер" />
-        <button onclick="register()">Зарегистрироваться</button>
-        <p>
-          Уже есть аккаунт?
-          <span
-            style="cursor: pointer; text-decoration: underline"
-            onclick="showLogin()"
-            >Войти</span
-          >
-        </p>
+      <div id="adminPanel">
+        <h3>Админ панель</h3>
+        <button onclick="viewUsers()">Пользователи</button>
+        <button onclick="viewHistory()">История калькулятора</button>
       </div>
 
-      <!-- Форма входа -->
-      <div id="loginForm" style="display: none">
-        <h2>Вход</h2>
-        <input id="loginUsername" placeholder="Ник" />
-        <input id="loginPassword" type="password" placeholder="Пароль" />
-        <button onclick="login()">Войти</button>
-        <p>
-          Нет аккаунта?
-          <span
-            style="cursor: pointer; text-decoration: underline"
-            onclick="showRegister()"
-            >Зарегистрироваться</span
-          >
-        </p>
-      </div>
+      <h2>Калькулятор сопровода</h2>
+      <button id="showCalculatorBtn" onclick="showCalculator()">
+        Открыть калькулятор
+      </button>
+      <div id="calculator" style="display: none; margin-top: 10px">
+        <input class="orderText" placeholder="Что входит в заказ?" />
+        <input class="platform" placeholder="Платформа" />
+        <input class="orderNum" placeholder="Номер заказа" />
+        <input class="price" placeholder="Стоимость сопровода (руб)" />
+        <input class="tg" placeholder="TG юз того, кто нашел" />
+        <button onclick="calculate()">Посчитать</button>
+        <div class="result"></div>
+        <h3>Текст для копирования</h3>
+        <textarea class="copyBox" rows="12"></textarea>
 
-      <!-- Дашборд -->
-      <div id="dashboard" style="display: none">
-        <div id="profileIcon">⚙️</div>
-        <div id="profileSettings">
-          <h3>Настройки профиля</h3>
-          <input id="setUsername" placeholder="Ник" />
-          <input id="setEmail" placeholder="Email" />
-          <input id="setPhone" placeholder="Телефон" />
-          <input id="setTG" placeholder="TG юзер" />
-          <input id="setPassword" type="password" placeholder="Новый пароль" />
-          <button onclick="saveProfile()">Сохранить</button>
-          <button onclick="logoutUser()">Выйти</button>
-        </div>
-
-        <div id="adminPanel">
-          <h3>Админ панель</h3>
-          <button onclick="viewUsers()">Пользователи</button>
-          <button onclick="viewHistory()">История калькулятора</button>
-        </div>
-
-        <h2>Калькулятор сопровода</h2>
-        <button id="showCalculatorBtn" onclick="showCalculator()">
-          Открыть калькулятор
+        <button
+          id="successBtn"
+          style="display: none; background: #4caf50"
+          onclick="showSuccess()"
+        >
+          🟢 Удачное выполнение
         </button>
-        <div id="calculator" style="display: none; margin-top: 10px">
-          <input class="orderText" placeholder="Что входит в заказ?" />
-          <input class="platform" placeholder="Платформа" />
-          <input class="orderNum" placeholder="Номер заказа" />
-          <input class="price" placeholder="Стоимость сопровода (руб)" />
-          <input class="tg" placeholder="TG юз того, кто нашел" />
-          <button onclick="calculate()">Посчитать</button>
-          <div class="result"></div>
-          <h3>Текст для копирования</h3>
-          <textarea class="copyBox" rows="12"></textarea>
+        <button
+          id="failBtn"
+          style="display: none; background: #e53935"
+          onclick="showFail()"
+        >
+          🔴 Неудачное выполнение
+        </button>
 
-          <button
-            id="successBtn"
-            style="display: none; background: #4caf50"
-            onclick="showSuccess()"
-          >
-            🟢 Удачное выполнение
-          </button>
-          <button
-            id="failBtn"
-            style="display: none; background: #e53935"
-            onclick="showFail()"
-          >
-            🔴 Неудачное выполнение
-          </button>
+        <div id="failBlock" style="display: none; margin-top: 10px">
+          <input id="failUsers" placeholder="Юзы участников через пробел" />
+          <button onclick="makeFail()">Сформировать</button>
+          <textarea id="failCopy" rows="6"></textarea>
+        </div>
 
-          <div id="failBlock" style="display: none; margin-top: 10px">
-            <input id="failUsers" placeholder="Юзы участников через пробел" />
-            <button onclick="makeFail()">Сформировать</button>
-            <textarea id="failCopy" rows="6"></textarea>
-          </div>
-
-          <div id="successBlock" style="display: none; margin-top: 10px">
-            <input
-              id="winGames"
-              type="number"
-              placeholder="Количество удачных каток"
-            />
-            <div id="players"></div>
-            <button onclick="addPlayer()">Еще игрок</button>
-            <button onclick="makeSuccess()">Сформировать</button>
-            <textarea id="successCopy" rows="10"></textarea>
-          </div>
+        <div id="successBlock" style="display: none; margin-top: 10px">
+          <input
+            id="winGames"
+            type="number"
+            placeholder="Количество удачных каток"
+          />
+          <div id="players"></div>
+          <button onclick="addPlayer()">Еще игрок</button>
+          <button onclick="makeSuccess()">Сформировать</button>
+          <textarea id="successCopy" rows="10"></textarea>
         </div>
       </div>
     </div>
@@ -371,13 +368,6 @@
         document.getElementById("setPhone").value = user.phone;
         document.getElementById("setTG").value = user.tg;
       }
-
-      // ===== Кнопка назад =====
-      document.getElementById("backBtn").addEventListener("click", () => {
-        const user = getCurrentUser();
-        if (!user) showWelcome();
-        else startDashboard();
-      });
 
       // ===== История калькулятора =====
       function saveHistory(entry) {
@@ -602,7 +592,6 @@ ${tgUser} - ${finder}р
         document.getElementById("failCopy").value =
           `❌ Неудачное выполнение\n${text}`;
       }
-      
     </script>
   </body>
 </html>
